@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wwwext
+spec:
+  ports:
+  - port: 80
+  type: ExternalName
+  externalName: heise.de

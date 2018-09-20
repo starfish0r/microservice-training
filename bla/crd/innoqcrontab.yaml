@@ -1,0 +1,8 @@
+---
+
+apiVersion: innoq.com/v1
+kind: InnoqCronTab
+metadata:
+  name: my-new-cron-object
+cronSpec: "* * * *"
+image: innoqs-awesome-cron-image

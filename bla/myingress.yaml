@@ -1,0 +1,20 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: myingress
+spec:
+  rules:
+  - host: bootcamp.g.ch.innoq.io
+    http:
+      paths:
+      - path: /server
+        backend:
+          serviceName: www
+          servicePort: 80
+      - path: /heise
+        backend:
+          serviceName: wwwep
+          servicePort: 80
