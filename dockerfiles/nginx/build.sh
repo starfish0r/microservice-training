@@ -1,1 +1,1 @@
-docker build -t starfish0r/nginx-p0 .
+docker build -t starfish0r/assets:latest .

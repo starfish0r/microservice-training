@@ -1,27 +1,38 @@
 # STEP 1 build executable binary
 
-FROM golang:latest as builder
-COPY einbuchen .
-#WORKDIR $GOPATH/src/mypackage/myapp/
+#FROM golang:1.9 as builder
+#WORKDIR /go/src/github.com/container-bootcamp/einbuchen
+#COPY . .
 
-#get dependancies
-#you can also use dep
+#ENV PKG github.com/container-bootcamp/einbuchen
+#ENV VERSION "latest"
 
-RUN go get -u github.com/golang/dep/cmd/dep && dep ensure
-RUN GOARCH=amd64 CGO_enabled=0 go install \
-      -installsuffix 'static' \
-      -ldflags '-X $(PKG)/pkg/version.VERSION=$(VERSION)' \
-      -o /go/bin/einbuchen
-#RUN go get -d -v
+#RUN go get -u github.com/golang/dep/cmd/dep
+#RUN dep ensure
+#RUN GOARCH=amd64 CGO_enabled=0 go install \
+#      -installsuffix 'static' \
+#      -ldflags '-X $(PKG)/pkg/version.VERSION=$(VERSION)' \
+#      ./...
 
-#build the binary
-#RUN go build -o /go/bin/hello
+#FROM scratch
+#COPY --from=builder /go/bin/einbuchen .
+#ADD resources/ /resources
+#ENTRYPOINT ["./einbuchen"]
 
-# STEP 2 build a small image
+FROM golang:1.9 AS build
 
-# start from scratch
+ENV VERSION latest
+RUN go get -u github.com/golang/dep/cmd/dep
+COPY . /go/src/github.com/container-bootcamp/einbuchen/
+WORKDIR /go/src/github.com/container-bootcamp/einbuchen/
+RUN dep ensure
+RUN	GOARCH=amd64 CGO_ENABLED=0 go install \
+    -installsuffix 'static' \
+    -ldflags '-X $(PKG)/pkg/version.VERSION=$(VERSION)' \
+    ./...
+
 FROM scratch
-
-# Copy our static executable
-COPY --from=builder /go/bin/einbuchen /go/bin/einbuchen
-ENTRYPOINT ["/go/bin/einbuchen"]
+WORKDIR /
+COPY --from=build /go/bin/einbuchen /einbuchen
+ADD resources/ /resources/
+ENTRYPOINT ["/einbuchen"]

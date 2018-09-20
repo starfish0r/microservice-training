@@ -13,6 +13,7 @@ const einbuchenFormTmpl = `
     <link rel="stylesheet" href="assets/dist/main.css"/>
 </head>
 <body>
+<esi:include src="http://assets/header.html" />
 <main>
     <div class="o-box">
         <h1>Einbuchen</h1>
@@ -43,6 +44,7 @@ const einbuchenFormTmpl = `
         </k8s-form>
     </div>
 </main>
+<esi:include src="http://assets/footer.html" />
 </body>
 </html>
 {{ end }}
@@ -57,6 +59,7 @@ const einbuchenFormTmpl = `
     <link rel="stylesheet" href="assets/dist/main.css"/>
 </head>
 <body>
+<esi:include src="http://assets/header.html" />
 <main>
     <div class="card bg-light mb-3">
         <div class="card-body">
@@ -75,6 +78,7 @@ const einbuchenFormTmpl = `
         </div>
     </div>
 </main>
+<esi:include src="http://assets/footer.html" />
 </body>
 </html>
 {{ end }}
