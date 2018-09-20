@@ -1,0 +1,3 @@
+declare -x KUBECONFIG="/home/kube/config/kubeconfig-3"
+
+
