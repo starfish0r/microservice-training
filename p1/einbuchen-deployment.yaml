@@ -43,7 +43,7 @@ kind: Deployment
 metadata:
   name: einbuchen
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: einbuchen
@@ -96,7 +96,6 @@ kind: Service
 metadata:
   name: www-einbuchen
 spec:
-  type: LoadBalancer
   ports:
     - port: 8090
       targetPort: 8080
@@ -105,6 +104,22 @@ spec:
     app: einbuchen
 
 ---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: einbuchen-intern
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: einbuchen
+
+---
+
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

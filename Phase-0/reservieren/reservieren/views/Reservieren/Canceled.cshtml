@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Buch - Reservieren";
+    bool success = (bool) ViewData["Canceled"];
+    string isbn = (string) ViewData["Isbn"];
+}
+
+<esi:include src="http://assets/header.html"/>
+<main>
+    <div class="o-box">
+        <h1>Buch Reservieren</h1>
+        <div class="card bg-light mb-3">
+            @if (success)
+            {
+                @: Buch @isbn erfolgreich storniert
+            }
+            else
+            {
+                @:Buch @isbn; nicht erfolgreich storniert
+            }
+        </div>
+    </div>
+</main>
+<esi:include src="http://assets/footer.html"/>

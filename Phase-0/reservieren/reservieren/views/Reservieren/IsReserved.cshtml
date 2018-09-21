@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Buch - Reservieren";
+    bool reserved = (bool) ViewData["Reserved"];
+    string isbn = (string) ViewData["Isbn"];
+}
+
+<esi:include src="http://assets/header.html"/>
+<div class="o-box">
+    <h1>Buch Reservieren</h1>
+    <p class="card-text">
+
+        @if (reserved)
+        {
+            @: <main>Buch reserviert: <span class="badge badge-danger">ja</span></main>
+        }
+        else
+        {
+            @: <main>Buch reserviert: <span class="badge badge-success">nein</span></main>
+        }
+        <br>
+        Weiter zu <a href="/suchen" class="btn btn-dark">suchen</a>
+    </p>
+</div>
+<esi:include src="http://assets/footer.html"/>

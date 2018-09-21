@@ -1,0 +1,60 @@
+﻿@using static reservieren.Models.BookLibrarianLookup;
+@{
+    ViewData["Title"] = "Buch - Reservieren";
+    var book = (BookLibrarianLookup.BookLookupResult) ViewData["Book"];
+    bool reserved = book.Reserved;
+    bool lent = book.Lent;
+}
+
+<esi:include src="http://assets/header.html"/>
+<main>
+    <div class="o-box">
+        <h1>Buch Reservieren</h1>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <p>
+                    <h4 class="card-title">Titel: @book.Title</h4><br>
+                    <h6 class="card-subtitle mb-2 text-muted">Autor: @book.Author</h6><br>
+                    <p class="card-text">Kurzbeschreibung: @book.ShortDescription</p><br>
+                    Isbn: @book.Isbn<br>
+
+                    @if (lent)
+                    {
+                        @: Ausgeliehen: <span class="badge badge-danger">ja</span>
+                    }
+                    else
+                    {
+                        @: Ausgeliehen <span class="badge badge-success">nein</span>
+                    }
+                    <br>
+                    @if (reserved)
+                    {
+                        @: Reserviert: <span class="badge badge-danger">ja</span><br>
+                        @:<br>
+                        if (!lent)
+                        {
+                            @:<form action="/reservieren/book/@book.Isbn/reserve" method="post">
+                            @: <input type="hidden" name="reserve" value="false"/>
+                            @: <button class="btn btn-dark" type="submit">Stornieren</button>
+                            @: </form>
+                        }
+                    }
+                    else
+                    {
+                        @: Reserviert: <span class="badge badge-success">nein</span><br>
+                        @:<br>
+                        if (!lent)
+                        {
+                            @:<form action="/reservieren/book/@book.Isbn/reserve" method="post">
+                            @: <input type="hidden" name="reserve" value="true"/>
+                            @: <button class="btn btn-dark" type="submit">Reservieren</button>
+                            @: </form>
+                        }
+                    }
+
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+<esi:include src="http://assets/footer.html"/>

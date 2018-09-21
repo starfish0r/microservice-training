@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: varnish-for-suchen
+data:
+  default.vcl: |-
+    vcl 4.0;
+    backend default {
+        .host = "localhost";
+        .port = "80";
+    }
+    backend assets {
+        .host = "assets";
+        .port = "80";
+    }
+    sub vcl_backend_response {
+        set beresp.do_esi = true;
+    }
+    sub vcl_recv {
+        if (req.http.host == "assets") {
+            set req.backend_hint = assets;
+        } else {
+            set req.backend_hint = default;
+        }
+    }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suchen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suchen
+  template:
+    metadata:
+      labels:
+        app: suchen
+        role: backend
+    spec:
+      containers:
+      - name: msghandler
+        image: starfish0r/msghandler:latest
+        ports:
+        - containerPort: 80
+      - name: suchen
+        image: starfish0r/suchen:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: URI_PREFIX
+          value: "/suchen"
+        - name: ES_URI
+          value: "https://elasticsearch-suchen:9200"
+      - name: varnish-esi-suchen
+        image: million12/varnish
+        env:
+          - name: VCL_CONFIG
+            value: /etc/varnish/default.vcl
+          - name: VARNISHD_PARAMS
+            value: -a 0.0.0.0:8080
+        volumeMounts:
+        - name: varnish-config-volume
+          mountPath: /etc/varnish/
+      volumes:
+      - name: varnish-config-volume
+        configMap:
+          name: varnish-for-suchen
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: www-suchen
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: suchen
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-suchen
+spec:
+  rules:
+  - host: 3.g.ch.innoq.io
+    http:
+      paths:
+      - path: /suchen
+        backend:
+          serviceName: www-suchen
+          servicePort: 80
+

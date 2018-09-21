@@ -1,0 +1,57 @@
+---
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: pgset
+spec:
+  serviceName: pgset
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: pgset-master
+    spec:
+      initContainers:
+      - name: removelostandfound
+        image: busybox
+        command:
+        - sh
+        - -c
+        - "rm -rf /data/lost+found"
+        volumeMounts:
+        - mountPath: "/data"
+          name: postgresql-data-volume
+      containers:
+      - name: pgset
+        image: quay.io/containerbootcamp/postgres-simple
+        ports:
+        - containerPort: 5432
+          name: postgres 
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "PpOoSsTtGgRrEeSs"
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: postgresql-data-volume
+  volumeClaimTemplates:
+  - metadata:
+      name: postgresql-data-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: pgpool
+spec:
+  ports:
+  - protocol: TCP
+    port: 5432
+  selector:
+    name: pgset-master

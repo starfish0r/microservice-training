@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  reservieren:
+    image: reservieren
+    build:
+      context: ./reservieren
+      dockerfile: Dockerfile

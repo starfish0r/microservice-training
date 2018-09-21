@@ -1,0 +1,22 @@
+---
+
+apiVersion: enterprises.upmc.com/v1
+kind: ElasticsearchCluster
+metadata:
+  name: suchen
+  labels:
+    role: backend
+    scs: suchen
+spec:
+  client-node-replicas: 1
+  master-node-replicas: 1
+  data-node-replicas: 1
+  elastic-search-image: upmcenterprises/docker-elasticsearch-kubernetes:5.6.4_2
+  network-host: _eth0_
+  zones: []
+  data-volume-size: 10Gi
+  java-options: "-Xms256m -Xmx256m"
+  snapshot:
+    scheduler-enabled: false
+    bucket-name: elasticsnapshots99
+    cron-schedule: "@every 2m"
